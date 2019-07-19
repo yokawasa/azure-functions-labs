@@ -7,7 +7,7 @@
 variables:
   # the name of the service connection
   #serviceConnectionToAzure: name-of-your-service-connection
-  serviceConnectionToAzure: connection-to-rg-azfunc-ci
+  serviceConnectionToAzure: connection-to-azfunc-resourcegroup
   # the name of your web app 
   #appName: my-app-name
   appName: azfuncws01
