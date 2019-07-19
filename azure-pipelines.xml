@@ -67,4 +67,4 @@ steps:
     appType: functionApp
     appName: $(appName)
     package: $(build.artifactstagingdirectory)
-    appSettings: -AzureWebJobsStorage $(storageConnString) -THUMBNAIL_CONTAINER_NAME thumbnails -THUMBNAIL_WIDTH 100 -FUNCTIONS_EXTENSION_VERSION=~2 -APPINSIGHTS_INSTRUMENTATIONKEY $(appInsightsKey)
+    appSettings: -AzureWebJobsStorage $(storageConnString) -THUMBNAIL_CONTAINER_NAME thumbnails -THUMBNAIL_WIDTH 100 -FUNCTIONS_EXTENSION_VERSION ~2 -APPINSIGHTS_INSTRUMENTATIONKEY $(appInsightsKey)
