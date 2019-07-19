@@ -7,13 +7,13 @@
 variables:
   # the name of the service connection
   #serviceConnectionToAzure: name-of-your-service-connection
-  serviceConnectionToAzure: connection-to-azfunc-resourcegroup
+  serviceConnectionToAzure: $(myconfig.serviceconnection)
   # the name of your web app 
-  appName: my-app-name
+  appName: $(myconfig.appname)
   # connection string for the function's storage
-  storageConnString: my-store-conn-string
+  storageConnString: $(myconfig.storageconnstring)
   # application Insights Instrumentation 
-  appInsightsKey: my-app-insights-key
+  appInsightsKey: $(myconfig.appinsightskey)
 
 trigger:
 - master
