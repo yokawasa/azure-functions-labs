@@ -9,6 +9,10 @@ variables:
   serviceConnectionToAzure: name-of-your-service-connection
   # the name of your web app 
   appName: my-app-name
+  # connection string for the function's storage
+  storageConnString: my-store-conn-string
+  # application Insights Instrumentation 
+  appInsightsKey: my-app-insights-key
 
 trigger:
 - master
@@ -54,6 +58,7 @@ steps:
     PathtoPublish: '$(build.artifactstagingdirectory)'
 
 ## Deploy to Azure Functions
+# ref https://github.com/Microsoft/azure-pipelines-tasks/blob/master/Tasks/AzureFunctionAppV1/README.md
 - task: AzureFunctionApp@1
   displayName: Azure Function App deploy
   inputs:
@@ -61,3 +66,4 @@ steps:
     appType: functionApp
     appName: $(appName)
     package: $(build.artifactstagingdirectory)
+    appSettings: -AzureWebJobsStorage $(storageConnString) -THUMBNAIL_CONTAINER_NAME thumbnails -THUMBNAIL_WIDTH 100 -FUNCTIONS_EXTENSION_VERSION=~2 -APPINSIGHTS_INSTRUMENTATIONKEY $(appInsightsKey)
