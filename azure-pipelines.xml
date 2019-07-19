@@ -6,7 +6,8 @@
 # set some variables that you'll need when you deploy
 variables:
   # the name of the service connection
-  serviceConnectionToAzure: name-of-your-service-connection
+  #serviceConnectionToAzure: name-of-your-service-connection
+  serviceConnectionToAzure: connection-to-azfunc-resourcegroup
   # the name of your web app 
   appName: my-app-name
   # connection string for the function's storage
