@@ -1,0 +1,63 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# YAML Schema reference: https://aka.ms/yaml
+
+# set some variables that you'll need when you deploy
+variables:
+  # the name of the service connection
+  serviceConnectionToAzure: name-of-your-service-connection
+  # the name of your web app 
+  appName: my-app-name
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+## Restore
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+
+## Build
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration Release' # Update this to match your need
+
+## Publish to ZIP
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
+
+## Publish Artifact
+# This code (- task: PublishBuildArtifacts@1) takes all the files in $(Build.ArtifactStagingDirectory)
+# and upload them as an artifact of your build. 
+# For this task to work, you must have already published the output of 
+# your build to this directory by using the dotnet publish --output $(Build.ArtifactStagingDirectory) command
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+
+## Deploy to Azure Functions
+- task: AzureFunctionApp@1
+  displayName: Azure Function App deploy
+  inputs:
+    azureSubscription: $(serviceConnectionToAzure)
+    appType: functionApp
+    appName: $(appName)
+    package: $(build.artifactstagingdirectory)
