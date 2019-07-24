@@ -42,9 +42,9 @@ This repository contains Azure Functions Hands-on materials in Japanese.
             - [Web Appの作成](#web-appの作成)
             - [Web Appアプリのデプロイ](#web-appアプリのデプロイ)
             - [アクセステスト](#アクセステスト-1)
-    - [4. Setup CI/CD using Azure DevOps](#4-setup-cicd-using-azure-devops)
-        - [4-1. Preparatons](#4-1-preparatons)
-        - [4-2. CI/CD with azure-pipelines](#4-2-cicd-with-azure-pipelines)
+    - [4. CI/CD](#4-cicd)
+        - [4-1. Azure DevOpsの準備](#4-1-azure-devopsの準備)
+        - [4-2. azure-pipelinesを利用したCI/CDの設定](#4-2-azure-pipelinesを利用したcicdの設定)
     - [References](#references)
 
 <!-- /TOC -->
@@ -712,10 +712,11 @@ open https://$WEBAPP_NAME.azurewebsites.net/
 ![](assets/image-resizer-app-web-ui.png)
 
 
-## 4. Setup CI/CD using Azure DevOps
-### 4-1. Preparatons
+## 4. CI/CD
+### 4-1. Azure DevOpsの準備
 Will be updated shortly
-### 4-2. CI/CD with azure-pipelines
+
+### 4-2. azure-pipelinesを利用したCI/CDの設定
 Will be updated shortly
 
 
