@@ -45,6 +45,7 @@ This repository contains Azure Functions Hands-on materials in Japanese.
     - [4. CI/CD](#4-cicd)
         - [4-1. Azure DevOpsの準備](#4-1-azure-devopsの準備)
         - [4-2. azure-pipelinesを利用したCI/CDの設定](#4-2-azure-pipelinesを利用したcicdの設定)
+    - [5. Cleanup](#5-cleanup)
     - [References](#references)
 
 <!-- /TOC -->
@@ -81,7 +82,7 @@ Azure CLI で既定のブラウザーを開くことができる場合、開い�
 ```
 az account list -o table
 ```
-> Output
+> 出力結果
 ```
 Name                             CloudName    SubscriptionId                        State    IsDefault
 -------------------------------  -----------  ------------------------------------  -------  -----------
@@ -183,8 +184,9 @@ az functionapp create \
 ```bash
 func templates list
 ```
-<details><summary>Output</summary>
+<details><summary>出力結果</summary>
 <p>
+
 ```
 C# Templates:
   Azure Blob Storage trigger
@@ -208,6 +210,7 @@ C# Templates:
   Timer trigger
 ...
 ```
+
 </p>
 </details>
 
@@ -248,7 +251,7 @@ TestFunctions
 > - [local.settings.jsonリファレンス](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local#local-settings-file)
 
 >  **testfunc.cs**
-```dotnet
+```csharp
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -291,7 +294,9 @@ namespace TestFunctions
 ```bash
 func host start
 ```
-> Output
+<details><summary>出力結果</summary>
+<p>
+
 ```
 .NET Core 向け Microsoft (R) Build Engine バージョン 15.9.20+g88f5fadfbe
 Copyright (C) Microsoft Corporation.All rights reserved.
@@ -307,8 +312,6 @@ Copyright (C) Microsoft Corporation.All rights reserved.
     0 エラー
 
 経過時間 00:00:04.96
-
-
 
                   %%%%%%
                  %%%%%%
@@ -342,13 +345,16 @@ Http Functions:
         testfunc: [GET,POST] http://localhost:7071/api/testfunc
 ```
 
+</p>
+</details>
+
 #### アクセステスト
 上記コマンドでローカル起動したFunctionsを停止しない状態で、別のターミナルもしくはブラウザでアクセスすると次のような結果が出力される。
 
 ```bash
 curl "http://localhost:7071/api/testfunc?name=Azure"
 ```
-> Output
+> 出力結果
 ```
 Hello, Azure
 ```
@@ -358,7 +364,9 @@ Hello, Azure
 ```bash
 func azure functionapp publish $AZFUNC_APP_NAME
 ```
-> Output
+<details><summary>出力結果</summary>
+<p>
+
 ```
 .NET Core 向け Microsoft (R) Build Engine バージョン 15.9.20+g88f5fadfbe
 Copyright (C) Microsoft Corporation.All rights reserved.
@@ -383,12 +391,16 @@ Functions in azfuncws01:
         Invoke url: https://azfuncws01.azurewebsites.net/api/testfunc?code=kJtJHdmDdO4e6v98YZa3sVnhYB3rEnrFsjbx8WdrVMeadACwuct9FA==
 ```
 
+</p>
+</details>
+
+
 上記コマンドの出力結果で最後に表示される`Invoke url`がAzureにデプロイメントされたFunctionのエンドポイントになります。このエンドポイントに`&name=Azure`のパラメータを加えてアクセスすると次のようなローカル環境でのテストと同じ結果が得られます。
 
 ```bash
 curl "https://azfuncws01.azurewebsites.net/api/testfunc?code=kJtJHdmDdO4e6v98YZa3sVnhYB3rEnrFsjbx8WdrVMeadACwuct9FA==&name=Azure"
 ```
-> Output
+> 出力結果
 ```
 Hello, Azure
 ```
@@ -426,7 +438,7 @@ Event GridはAzure内もしくは外で発生したイベントをPush型でル�
 ```
 ngrok http -host-header=localhost 7071
 ```
-> Output
+> 出力結果
 ```
 ngrok by @inconshreveable                                                                                                                                                               (Ctrl+C to quit)
 
@@ -478,7 +490,7 @@ az storage account show-connection-string \
 --resource-group $RESOURCE_GROUP --name $STORAGE_ACCOUNT_NAME \
 --query connectionString --output tsv
 ```
-> Output
+> 出力結果
 ```
 DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=azfuncws01;AccountKey=NowJXRrQK8r15dNsxR215lYwbTXgZOAqz5hFa6mmkQlApw8evPOyfX8udW8t1YVTZKpv1e4oCFmJA1NkL3z9Wx==
 ```
@@ -503,7 +515,9 @@ DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=azfun
 ```bash
 func host start
 ```
-> Output
+<details><summary>出力結果</summary>
+<p>
+
 ```
 .NET Core 向け Microsoft (R) Build Engine バージョン 15.9.20+g88f5fadfbe
 Copyright (C) Microsoft Corporation.All rights reserved.
@@ -549,6 +563,8 @@ Application started. Press Ctrl+C to shut down.
 [2019/07/23 11:00:06] Host lock lease acquired by instance ID '000000000000000000000000BF147E01'.
 ```
 
+</p>
+</details>
 
 #### Event Gridサブスクリプションの設定（ローカルテスト用）
 
@@ -599,7 +615,9 @@ cd ImageFunctions
 
 func azure functionapp publish $AZFUNC_APP_NAME
 ```
-> Output
+<details><summary>出力結果</summary>
+<p>
+
 ```
 .NET Core 向け Microsoft (R) Build Engine バージョン 15.9.20+g88f5fadfbe
 Copyright (C) Microsoft Corporation.All rights reserved.
@@ -623,6 +641,9 @@ Syncing triggers...
 Functions in azfuncws01:
     Thumbnail - [eventGridTrigger]
 ```
+
+</p>
+</details>
 
 #### アプリケーション設定のアップデート
 
@@ -707,7 +728,7 @@ AzureStorageConfig__AccountKey=$STORAGE_KEY
 ```
 
 #### アクセステスト
-ブラウザでWeb Appにアクセスしてください
+作成したWeb Appににブラウザでアクセスしてください。サンプル画像をアップロードして無事に画面下部にサムネイルが表示されたら成功です。
 ```bash
 open https://$WEBAPP_NAME.azurewebsites.net/
 ```
@@ -722,7 +743,12 @@ Will be updated shortly
 ### 4-2. azure-pipelinesを利用したCI/CDの設定
 Will be updated shortly
 
+## 5. Cleanup
 
+本ハンズオンで作成した全てのリソースを削除してください
+```bash
+az group delete --name $RESOURCE_GROUP
+```
 ## References
 - [Azure Functions Documentation](https://docs.microsoft.com/en-us/azure/azure-functions/)
 - [Microsoft Learn (Azure Functions)](https://docs.microsoft.com/en-us/learn/browse/?term=Azure%20Functions)
