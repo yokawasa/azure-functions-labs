@@ -183,7 +183,8 @@ az functionapp create \
 ```bash
 func templates list
 ```
-> Output
+<details><summary>Output</summary>
+<p>
 ```
 C# Templates:
   Azure Blob Storage trigger
@@ -207,6 +208,8 @@ C# Templates:
   Timer trigger
 ...
 ```
+</p>
+</details>
 
 #### Functionsアプリの新規作成
 
