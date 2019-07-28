@@ -43,8 +43,14 @@ This repository contains Azure Functions Hands-on materials in Japanese.
             - [Web Appアプリのデプロイ](#web-appアプリのデプロイ)
             - [アクセステスト](#アクセステスト-1)
     - [4. CI/CD](#4-cicd)
-        - [4-1. Azure DevOpsの準備](#4-1-azure-devopsの準備)
-        - [4-2. azure-pipelinesを利用したCI/CDの設定](#4-2-azure-pipelinesを利用したcicdの設定)
+        - [4-1. Azure Pipelinesの準備](#4-1-azure-pipelinesの準備)
+            - [Azure DevOps Organizationの用意](#azure-devops-organizationの用意)
+            - [Githubアカウント](#githubアカウント)
+            - [コード取得](#コード取得)
+        - [4-2. Service Connectionsの設定](#4-2-service-connectionsの設定)
+        - [4-3. azure-pipelinesを利用したCI/CDの設定](#4-3-azure-pipelinesを利用したcicdの設定)
+            - [Pipelineの作成](#pipelineの作成)
+            - [Pipelineの実行](#pipelineの実行)
     - [5. Cleanup](#5-cleanup)
     - [References](#references)
 
@@ -61,7 +67,7 @@ Azure CLI `2.0.14もしくはそれ以上`のバージョンをインストー�
 
 #### Azure Functions Core Tools (Ver 2.x)
 
-Azure Functionsのラインタイムを含み、ローカル開発、テスト/デバックに必要なAzure Functions Core Toolsバージョン2をインストールください。手順については[Azure Functions Core Tools のインストール](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local#v2)を参照ください。
+Azure Functionsのラインタイムを含み、ローカル開発・テストで必要となります。Azure Functions Core Toolsバージョン2をインストールください。手順については[Azure Functions Core Tools のインストール](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local#v2)を参照ください。
 
 #### Visual Studio Codeとその拡張 (optional)
 
@@ -737,18 +743,77 @@ open https://$WEBAPP_NAME.azurewebsites.net/
 
 
 ## 4. CI/CD
-### 4-1. Azure DevOpsの準備
-Will be updated shortly
 
-### 4-2. azure-pipelinesを利用したCI/CDの設定
-Will be updated shortly
+このセクションでは[Azure Pipelines](https://azure.microsoft.com/ja-jp/services/devops/pipelines/)を利用したビルドとデプロイの自動化を設定します。
+
+### 4-1. Azure Pipelinesの準備
+
+#### Azure DevOps Organizationの用意
+Azure DevOps Organizationが必要になります（無料）。もしAzure DevOps Organizationをお持ちでない場合は次の手順に従いAzure DevOpsへのサインイン/サインアップを行いOrganizationを作成してください。
+- [Quickstart: Sign up, sign in to Azure DevOps](https://docs.microsoft.com/ja-jp/azure/devops/user-guide/sign-up-invite-teammates?view=azure-devops)
+- [Quickstart: Create an organization or project collection](https://docs.microsoft.com/ja-jp/azure/devops/organizations/accounts/create-organization?toc=%2Fazure%2Fdevops%2Fget-started%2Ftoc.json&bc=%2Fazure%2Fdevops%2Fget-started%2Fbreadcrumb%2Ftoc.json&view=azure-devops)
+
+#### Githubアカウント
+コードレポジトリを作成可能なGithubアカウントが必要になります（無料）。もしまだお持ちでない場合は[こちら](https://github.com)より作成してください。
+
+#### コード取得
+本セッションで作成するパイプラインではデプロイ対象のサンプルアプリとして下記レポジトリのアプリを使用します。ご自分のGithubアカウントで下記レポジトリをForkしてください。
+
+```
+https://github.com/yokawasa/azure-functions-labs
+```
+
+### 4-2. Service Connectionsの設定
+Azure DevOpsにサインインして、ブラウザで今回ご利用のAzure DevOps Organizationのダッシュボードを表示させてください。
+- https://dev.azure.com/{your-organization-name}
+
+続いて画面右上の`Create Project`ボタンをおして、 新しいプロジェクトを作成してください。設定パラメータはデフォルトのままで問題ありません。
+![](assets/azuredevops-create-project.png)
+
+続いてダッシュボードの画面左下にある`Project settings`を選択ください。設定ページで次の流れで`Azure Resource Manager`を選択ください。
+> `Select Pipelines` > `Service connections` > `New service connection` > ` Azure Resource Manager`
+
+すると、ダイアログボックス`Add an Azure Resource Manager service connection`が表示されます。 次のように各パラメータの入力を行ってください。
+- **Connection Name**: 　任意のService Connection名を入力ください（後の設定で名前が必要になるのでメモください）
+- **Scope Level**: Subscriptionを選択ください
+- **Subscription**:  本デプロイメント用のApp Servicesアカウントを作成したいサブスクリプションを選択ください。ここではすでにFunctions用のApp Servicesアカウントを作成しているのでそのサブスクリプションを選択ください。
+- **Resource Group**: パイプラインからのアクセス許可を与えるAzureのリソースグループ名をお選びください。ここではすでにFunctions用のApp Servicesアカウントを作成したリソースグループを選択ください。
+- **Allow all pipelines to use this connection**をチェックしてください。
+![](assets/service-connection-setting.png)
+
+
+### 4-3. azure-pipelinesを利用したCI/CDの設定
+
+#### Pipelineの作成
+1. Azure DevOps Organizationにサインインして先ほど作成したプロジェクトを開いてください
+2. 左メニューの`Pipelines`をクリックして`New Build Pipeline`を選択ください
+3. コードレポジトリに`Github`を選択して、先のステップにてForkしていただいたレポジトリ（`azure-functions-labs`）を選択ください。
+    ![](assets/pipeline-select-repo.png)
+4. `Existing Azure Pipelines YAML file`を選択いただき、レポジトリ中のPipeline YAMLファイルパスを入力ください。ここではルート配下の`azure-pipelines.xml`になります。
+    ![](assets/pipeline-select-existing-yaml.png)
+5. `Review your pipeline YAML`ページで、前ステップで選択いただいたYAMLファイルが表示されます。各種パラメータが変数形式で記述していますが、まずは`Run`を実行ください。Pipelineが失敗します。
+6. 再び上記で作成したPipelineを選択して選択して`Edit`ボタンで編集ページに進めてください。そこで下記のように`Variables`を選択いただきPipelineの変数設定ページに進めてください。
+    ![](assets/pipeline-edit.png)
+7. Pipelineの変数設定ページにて`Add`ボタンを押して下記４つのPipeline変数を設定ください。
+    ![](assets/pipeline-edit-variables.png)
+    - `myconfig.serviceconnection`: 4-2で設定したService Connectionsの名前
+    - `myconfig.appname`: デプロイ先のAzure Functions App名
+    - `myconfig.storageconnstring`: Azure Functionsが利用するAzureストレージの接続文字列 
+    - `$(myconfig.appinsightskey`: App Insightsのキー
+
+#### Pipelineの実行
+Pipeline設定後にPipelineを実行してください。Pipelineの処理が開始され次のようなページに遷移します。最終的にAzure Functionsのデプロイメントが成功することを確認ください。失敗した場合はService Connectionsの設定、もしくはPipeline変数の内容に問題がある可能性があります。
+  ![](assets/pipeline-run.png)
+
+最終的にAzureポータル、もしくはFunctionsを動かしてレポジトリ上のAzure FunctionsコードがAzureにデプロイメントされたことを確認してください。
 
 ## 5. Cleanup
 
-本ハンズオンで作成した全てのリソースを削除してください
+本ハンズオンで作成したリソースを削除してください。
 ```bash
 az group delete --name $RESOURCE_GROUP
 ```
+
 ## References
 - [Azure Functions Documentation](https://docs.microsoft.com/en-us/azure/azure-functions/)
 - [Microsoft Learn (Azure Functions)](https://docs.microsoft.com/en-us/learn/browse/?term=Azure%20Functions)
