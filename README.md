@@ -6,6 +6,7 @@ This repository contains Azure Functions Hands-on materials in Japanese.
 <!-- TOC -->
 
 - [Azure Functions Hands-on Lab](#azure-functions-hands-on-lab)
+    - [0. サンプルアプリアーキテクチャ](#0-サンプルアプリアーキテクチャ)
     - [1. 準備](#1-準備)
         - [1-1. ソフトウェアのインストール](#1-1-ソフトウェアのインストール)
             - [Azure CLI (>=2.0.14)](#azure-cli-2014)
@@ -56,6 +57,10 @@ This repository contains Azure Functions Hands-on materials in Japanese.
 
 <!-- /TOC -->
 
+
+## 0. サンプルアプリアーキテクチャ
+
+![](assets/sample-app-architecture.png)
 
 ## 1. 準備
 
@@ -507,7 +512,7 @@ DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=azfun
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=azfuncws01;AccountKey=NowJXRrQK8r15dNsxR215lYwbTXgZOAqz5hFa6mmkQlApw8evPOyfX8udW8t1YVTZKpv1e4oCFmJA1NkL3z9Wx==",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=azfuncws01;AccountKey=***********************************************==",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "THUMBNAIL_CONTAINER_NAME": "thumbnails",
     "THUMBNAIL_WIDTH": "100",
