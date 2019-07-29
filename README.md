@@ -10,6 +10,7 @@ This repository contains Azure Functions Hands-on materials in Japanese.
     - [1. 準備](#1-準備)
         - [1-1. ソフトウェアのインストール](#1-1-ソフトウェアのインストール)
             - [Azure CLI (>=2.0.14)](#azure-cli-2014)
+            - [.NET Core SDK](#net-core-sdk)
             - [Azure Functions Core Tools (Ver 2.x)](#azure-functions-core-tools-ver-2x)
             - [Visual Studio Codeとその拡張 (optional)](#visual-studio-codeとその拡張-optional)
         - [1-2. Azureサブスクリプションの選択](#1-2-azureサブスクリプションの選択)
@@ -32,6 +33,7 @@ This repository contains Azure Functions Hands-on materials in Japanese.
             - [Functionsアプリのローカル実行](#functionsアプリのローカル実行)
             - [Event Gridサブスクリプションの設定（ローカルテスト用）](#event-gridサブスクリプションの設定ローカルテスト用)
             - [Event Grid Trigger Functionのローカルテスト](#event-grid-trigger-functionのローカルテスト)
+            - [Event Gridサブスクリプションを削除](#event-gridサブスクリプションを削除)
         - [2-3. FunctionsのAzureへのデプロイメントとテスト](#2-3-functionsのazureへのデプロイメントとテスト)
             - [Functionsのデプロイメント](#functionsのデプロイメント)
             - [アプリケーション設定のアップデート](#アプリケーション設定のアップデート)
@@ -69,6 +71,11 @@ This repository contains Azure Functions Hands-on materials in Japanese.
 #### Azure CLI (>=2.0.14)
 
 Azure CLI `2.0.14もしくはそれ以上`のバージョンをインストールしてください。詳しくは[Azure CLIのインストール](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest)を参照ください。
+
+#### .NET Core SDK
+
+- Windowsの場合: [NET Core 2.x SDK for Windows](https://www.microsoft.com/net/download/windows) をインストールしてください
+- Macの場合: [NET Core 2.x SDK for Windows](https://www.microsoft.com/net/download/macos) をインストールしてください
 
 #### Azure Functions Core Tools (Ver 2.x)
 
@@ -599,7 +606,7 @@ Azureポータルで下記イメージのように左側のメニューから「
 **Event Grid サブスクリプションの設定要点**
 - name: `ImageResizeSubLocal`
 - topic: `Azure Storage (azfuncws01)`
-- endpoint: `Webhook`: `https://6083843f.ngrok.io/runtime/webhooks/EventGrid?functionName=Thumbnail`
+- endpoint: `Webhook`: `https://(YOURDOMAIN).ngrok.io/runtime/webhooks/EventGrid?functionName=Thumbnail`
 - filters: 次で始まるサブジェクト: `/blobServices/default/containers/images/blobs/`
 > [NOTE] Blob Storageイベントの詳細については[こちら](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-event-quickstart#trigger-an-event-from-blob-storage)を参照ください
 
@@ -614,6 +621,9 @@ Event Grid サブスクリプションの設定が完了したら、最後にイ
 3. 最終的にリサイズされた画像がサムネイル格納用コンテナに保存されていることを確認
 ![](assets/image-upload-test3.png)
 
+
+#### Event Gridサブスクリプションを削除
+必要に応じてAzureポータルでローカルテスト用に作成したEventGridサブクリプションを削除してください。
 
 ### 2-3. FunctionsのAzureへのデプロイメントとテスト
 
