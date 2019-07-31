@@ -49,7 +49,7 @@ namespace ImageFunctions
 
             if (isSupported)
             {
-                switch (extension)
+                switch (extension.ToLower())
                 {
                     case "png":
                         encoder = new PngEncoder();

@@ -68,36 +68,77 @@ This repository contains Azure Functions Hands-on materials in Japanese.
 
 ### 1-1. ソフトウェアのインストール
 
-#### Azure CLI (>=2.0.14)
+本ラボの手順は以下のソフトウェア環境で動作を確認しています。
+- Windows 10 Pro, Version 1903
+- PowerShell 5.1
+- Azure CLI 2.0
+- .NET Core SDK 2.2
+- Azure Functions Core Tools 2.7.1480
+- Git 2.22.0
+- Visual Studio Code 1.36.1
 
-Azure CLI `2.0.14もしくはそれ以上`のバージョンをインストールしてください。詳しくは[Azure CLIのインストール](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest)を参照ください。
+以降の手順にてコマンドラインを実行する際には Windows コマンドプロンプトではなく PowerShell をご利用ください。
 
-#### .NET Core SDK
+#### パッケージマネージャ Chocolatey 
 
-- Windowsの場合: [NET Core 2.x SDK for Windows](https://www.microsoft.com/net/download/windows) をインストールしてください
-- Macの場合: [NET Core 2.x SDK for Windows](https://www.microsoft.com/net/download/macos) をインストールしてください
+以降のソフトウェアセットアップを簡略化するための [Chocolatey](https://chocolatey.org/) をインストールしてください。
 
-#### Azure Functions Core Tools (Ver 2.x)
+#### .NET Core SDK 
 
-Azure Functionsのラインタイムを含み、ローカル開発・テストで必要となります。Azure Functions Core Toolsバージョン2をインストールください。手順については[Azure Functions Core Tools のインストール](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local#v2)を参照ください。
+Chocolatey を使用して [Azure CLI](https://chocolatey.org/packages/azure-cli) をインストールしてください。
+```powershell
+choco install azure-cli
+```
 
+あるいは [Windows での Azure CLI のインストール](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows) を参照ください。
+
+#### .NET Core SDK 
+
+Chocolatey を使用して [.NET Core SDK](https://chocolatey.org/packages/dotnetcore-sdk/2.2.401) をインストールしてください。
+```powershell
+choco install dotnetcore-sdk 
+```
+
+あるいは [NET Core 2.x SDK for Windows](https://www.microsoft.com/net/download/windows) を参照ください。
+
+#### Azure Functions Core Tools 
+
+Chocolatey を使用して [Azure Functions Core Tools バージョン2](https://chocolatey.org/packages/azure-functions-core-tools) をインストールしてください。
+```powershell
+choco install azure-functions-core-tools 
+```
+あるいは [Azure Functions Core Tools のインストール](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local#v2 )を参照ください。
+
+
+#### Git
+
+Chocolatey を使用して [Git](https://chocolatey.org/packages/git) をインストールしてください。
+```powershell
+choco install git
+```
 #### Visual Studio Codeとその拡張 (optional)
 
-Visual Studio Code (以下VS Code)をインストールした後、VS Code market placeよりAzure Functions extensionをインストールしてください。
-- [VS Coce](https://azure.microsoft.com/ja-jp/products/visual-studio-code/)
+Chocolatey を使用して [Visual Studio Code](https://chocolatey.org/packages/vscode) (以下VS Code)をインストールしてくささい。
+```powershell
+choco install vscode
+```
+あるいは [VS Coce](https://azure.microsoft.com/ja-jp/products/visual-studio-code/) を参照ください。
+
+続いて VS Code market placeよりAzure Functions extension をインストールしてください。
 - [Azure Function extension for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
 
 ### 1-2. Azureサブスクリプションの選択
 
 Azure CLI コマンドを使用する前に、`az login`でサインインする必要があります。
-```bash
+```powershell
 az login
 ```
-Azure CLI で既定のブラウザーを開くことができる場合、開いたブラウザにサインイン ページが読み込まれます。 それ以外の場合は、ブラウザーページを開いて、お使いのブラウザーで[https://aka.ms/devicelogin](https://aka.ms/devicelogin)に移動した後、コマンド ラインの指示に従って認証コードを入力します。 最後に、 ブラウザーでアカウントの資格情報を使用してサインインします。
+Azure CLI で既定のブラウザーを開くことができる場合、開いたブラウザにサインイン ページが読み込まれます。 
+それ以外の場合は、ブラウザーページを開いて、お使いのブラウザーで[https://aka.ms/devicelogin](https://aka.ms/devicelogin)に移動した後、
+コマンド ラインの指示に従って認証コードを入力します。 
+最後に、 ブラウザーでアカウントの資格情報を使用してサインインします。
 
-ログイン完了後に、次のコマンドを実行してAzureサブスクリプション一覧を表示します。
-
-```
+```powershell
 az account list -o table
 ```
 > 出力結果
@@ -112,22 +153,23 @@ Another sub3                     AzureCloud   xxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
 
 もし、複数のサブスクリプションを持っている場合は、次のように利用したいサブスクリプション名をデフォルトに設定ください
 
-```bash
+```powershell
 # az account set -s 'サブスクリプション名'
 az account set -s 'Visual Studio Premium with MSDN'
 ```
 
 ### 1-3. Azureリソースの作成
 
-Azure CLIコマンドを使ってAzure Functionsサービスアカウントを作成するために必要なリソースを作成します。
+Azure PowerShell コマンドを使って Azure Functions サービスアカウントを作成するために必要なリソースを作成します。
 
 #### リソースグループの作成
-まずは、Azureリソースグループを作成してください。基本的に、このハンズオンで作成するAzureリソースにはこのリソースグループ名を指定します。
 
-```bash
+まずは、Azure リソースグループを作成してください。基本的に、このハンズオンで作成する Azure リソースにはこのリソースグループ名を指定します。
+
+```powershell
 # 変数値の設定
-export RESOURCE_GROUP="リソースグループ名"   #ex. rg_azfuncws01
-export REGION="リージョン名"                #ex. japaneast
+$RESOURCE_GROUP = "リソースグループ名"   #ex. rg_azfuncws01
+$REGION = "リージョン名"                #ex. japaneast
 
 # リソースグループの作成
 az group create --name $RESOURCE_GROUP --location $REGION
@@ -136,56 +178,61 @@ az group create --name $RESOURCE_GROUP --location $REGION
 #### ストレージアカウントとコンテナの作成
 続いて、ハンズオンのサンプルアプリケーションで使用するストレージアカウントとストレージコンテナを作成してください。
 
-```bash
+```powershell 
 # 変数値の設定
-export STORAGE_ACCOUNT_NAME="ストレージアカウント名"
+$STORAGE_ACCOUNT_NAME = "ストレージアカウント名"
 
 # ストレージアカウントの作成
-az storage account create \
-  --name $STORAGE_ACCOUNT_NAME \
-  --location $REGION \
-  --resource-group $RESOURCE_GROUP \
-  --sku Standard_LRS \
+az storage account create `
+  --name $STORAGE_ACCOUNT_NAME `
+  --location $REGION `
+  --resource-group $RESOURCE_GROUP `
+  --sku Standard_LRS `
   --kind StorageV2
 
 # ストレージアクセスキーの取得
-ACCESS_KEY=$(az storage account keys list \
---account-name $STORAGE_ACCOUNT_NAME \
---resource-group $RESOURCE_GROUP --output tsv |head -1 | awk '{print $3}')
+az storage account keys list `
+  --account-name $STORAGE_ACCOUNT_NAME `
+  --resource-group $RESOURCE_GROUP `
+  | convertfrom-json `
+  | % {$_[0].value} `
+  | sv ACCESS_KEY
 
 # imagesコンテナの作成
-az storage container create  \
-    --name "images" \
-    --account-name $STORAGE_ACCOUNT_NAME \
-    --account-key $ACCESS_KEY \
+az storage container create  `
+    --name "images" `
+    --account-name $STORAGE_ACCOUNT_NAME `
+    --account-key $ACCESS_KEY `
     --public-access off
 
 # thumbnailsコンテナの作成 
 # アクセス権限: 一般アクセス可能 (public accessible)
-az storage container create  \
-    --name "thumbnails" \
-    --account-name $STORAGE_ACCOUNT_NAME \
-    --account-key $ACCESS_KEY \
+az storage container create  `
+    --name "thumbnails" `
+    --account-name $STORAGE_ACCOUNT_NAME `
+    --account-key $ACCESS_KEY `
     --public-access container
 ```
+
 >  [NOTE] このハンズオンではBlobストレージのイベントを使用します。Blobストレージのイベントは`General Purpose V2`タイプのストレージで利用可能です。 詳しくは、[こちら](https://docs.microsoft.com/ja-jp/azure/storage/blobs/storage-blob-event-quickstart#create-a-storage-account)のページを参照ください。
+
 
 #### Azure Functionsアカウントの作成
 
 ストレージアカウント作成後、次の手順でAzure Functionsアカウントを作成してください。
 
-```bash
+```powershell
 # 変数値の設定
-export AZFUNC_APP_NAME="Azure Functionsアカウント名"
+$AZFUNC_APP_NAME = 'Azure Functionsアカウント名'
 
 # Azure Functionsアカウントの作成
 # プラン: Consumption Plan
 # ラインタイム: dotnet
-az functionapp create \
-  --resource-group $RESOURCE_GROUP \
-  --name $AZFUNC_APP_NAME \
-  --storage-account $STORAGE_ACCOUNT_NAME \
-  --consumption-plan-location $REGION \
+az functionapp create `
+  --resource-group $RESOURCE_GROUP `
+  --name $AZFUNC_APP_NAME `
+  --storage-account $STORAGE_ACCOUNT_NAME `
+  --consumption-plan-location $REGION `
   --runtime dotnet
 ```
 
@@ -199,7 +246,7 @@ az functionapp create \
 #### テンプレート一覧を表示
 
 次のコマンドで利用可能なテンプレート一覧を表示します。
-```bash
+```powershell
 func templates list
 ```
 <details><summary>出力結果</summary>
@@ -232,10 +279,12 @@ C# Templates:
 </p>
 </details>
 
-#### Functionsアプリの新規作成
+#### Functions アプリの新規作成
 
-次のコマンドでAzure Functionsアプリプロジェクトを新規作成します。名前は`testFunctions`、ランタイムが`.NET Core`のプロジェクトを作成します。
-```bash
+次のコマンドでAzure Functionsアプリプロジェクトを新規作成します。
+名前は`TestFunctions`、ランタイムが`.NET Core`のプロジェクトを作成します。
+
+```powershell
 func init TestFunctions --worker-runtime dotnet
 ```
 
@@ -243,27 +292,29 @@ func init TestFunctions --worker-runtime dotnet
 
 #### Functionの新規追加 (Http Trigger Function)
 
-次に、このプロジェクトルートディレクトリに移動して、下記コマンドで`testfunc`という名前のHttpTrigger functionを新規作成する。
+次に、このプロジェクトルートディレクトリに移動して、下記コマンドで`testfunc`という名前のHttpTrigger functionを新規作成します。
 
-```bash
+```powershell
 # プロジェクトルートディレクトリに移動
 cd TestFunctions
 
 # テンプレートを元にHTTP Trigger functionの新規作成
-func new --language dotnet \
+func new --language dotnet `
     --template "HTTP trigger" --name testfunc
 ```
 
 最終的に次のようなファイル・ディレクトリが作成されます。
-```
-tree TestFunctions
+```powershell
+tree . /f
 
 TestFunctions
+├── .gitignore
 ├── TestFunctions.csproj    # dotnetプロジェクトの構成ファイルのリストとシステムアセンブリなどへの参照など 
 ├── host.json               # Functions Appのすべての関数に影響するグローバル構成設定ファイル
 ├── local.settings.json     # ローカル設定ファイル (Functions AppサービスのApp Settingsにあたる)
 └── testfunc.cs             # Functions(testfunc)のコード
 ```
+
 > [NOTE]
 > - [host.jsonリファレンス](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-host-json)
 > - [local.settings.jsonリファレンス](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local#local-settings-file)
@@ -307,9 +358,10 @@ namespace TestFunctions
 
 #### Functionsアプリの起動
 
-続いて、プロジェクトルートディレクトリ配下で次のコマンドでFunctionsをローカル起動します。依存するライブラリは自動的にインストールされます。
+続いて、プロジェクトルートディレクトリ配下で次のコマンドでFunctionsをローカル起動します。
+依存するライブラリは自動的にインストールされます。
 
-```bash
+```powershell
 func host start
 ```
 <details><summary>出力結果</summary>
@@ -367,19 +419,21 @@ Http Functions:
 </details>
 
 #### アクセステスト
-上記コマンドでローカル起動したFunctionsを停止しない状態で、別のターミナルもしくはブラウザでアクセスすると次のような結果が出力される。
 
-```bash
-curl "http://localhost:7071/api/testfunc?name=Azure"
+上記コマンドでローカル起動した Functions を停止しない状態で、別のターミナルもしくはブラウザでアクセスすると次のような結果が出力される。
+
+```powershell
+curl "http://localhost:7071/api/testfunc?name=Azure" -UseBasicParsing | select Content
 ```
 > 出力結果
 ```
 Hello, Azure
 ```
 
-最後に、下記コマンドで作成したFunctionsをAzureにデプロイメントします。デプロイメント先には[1-3. Azureリソースの作成](#1-3-azureリソースの作成)で作成したAzure Functionsアカウント名を指定ください。
+最後に、下記コマンドで作成したFunctionsをAzureにデプロイメントします。
+デプロイメント先には[1-3. Azureリソースの作成](#1-3-azureリソースの作成)で作成したAzure Functionsアカウント名を指定ください。
 
-```bash
+```powershell
 func azure functionapp publish $AZFUNC_APP_NAME
 ```
 <details><summary>出力結果</summary>
@@ -413,10 +467,12 @@ Functions in azfuncws01:
 </details>
 
 
-上記コマンドの出力結果で最後に表示される`Invoke url`がAzureにデプロイメントされたFunctionのエンドポイントになります。このエンドポイントに`&name=Azure`のパラメータを加えてアクセスすると次のようなローカル環境でのテストと同じ結果が得られます。
+上記コマンドの出力結果で最後に表示される`Invoke url`がAzureにデプロイメントされた Function のエンドポイントになります。
+このエンドポイントに`&name=Azure`のパラメータを加えてアクセスすると次のようなローカル環境でのテストと同じ結果が得られます。
 
-```bash
-curl "https://azfuncws01.azurewebsites.net/api/testfunc?code=kJtJHdmDdO4e6v98YZa3sVnhYB3rEnrFsjbx8WdrVMeadACwuct9FA==&name=Azure"
+```powershell
+#ホスト名や code クエリ文字列は実行環境に応じて書き換えてください
+curl "https://azfuncws01.azurewebsites.net/api/testfunc?code=kJtJHdmDdO4e6v98YZa3sVnhYB3rEnrFsjbx8WdrVMeadACwuct9FA==&name=Azure" -UseBasicParsing
 ```
 > 出力結果
 ```
@@ -448,12 +504,14 @@ gitコマンドがローカル環境にインストールされてない場合�
 
 #### ngrokのインストールと実行
 
-Event GridはAzure内もしくは外で発生したイベントをPush型でルーティング機能を提供するPlatoform-as-a-Service（PaaS)です。ここでEvent GridがローカルFunctionsと連携するためにはローカルで起動しているFunctionsにアクセスする設定する必要があります。これを可能にするのが[ngrok](https://ngrok.com/)です。ngrokによりAzure側からローカルマシンで起動しているFunctionsをコールすることができるようになります。
+Event GridはAzure内もしくは外で発生したイベントをPush型でルーティング機能を提供するPlatoform-as-a-Service（PaaS)です。
+ここでEvent GridがローカルFunctionsと連携するためにはローカルで起動しているFunctionsにアクセスする設定する必要があります。
+これを可能にするのが[ngrok](https://ngrok.com/)です。ngrokによりAzure側からローカルマシンで起動しているFunctionsをコールすることができるようになります。
 
 [こちら](https://ngrok.com/)からngrokをダウンロードください。
 
 続いて、下記ngrokコマンドを実行ください。
-```
+```powershell
 ngrok http -host-header=localhost 7071
 ```
 > 出力結果
@@ -473,9 +531,11 @@ Connections                   ttl     opn     rt1     rt5     p50     p90
                               0       0       0.00    0.00    0.00    0.00
 ```
 
-これによりlocalhost:7071への外からのアクセス用インターフェース(017ee120.ngrok.io) が発行されました。
+これによりlocalhost:7071への外からのアクセス用インターフェース(6083843f.ngrok.io) が発行されました。
+ランダムに発行されるホスト名部分は環境によって異なりますので、適宜読み替えてください。
 
-ここで利用するサンプルFunction名は`Thumbnail`であるため、実際に外からこのFunctionをコールするためのURLは次のようになります。このURLは[Event Gridサブスクリプションの設定](#event-gridサブスクリプションの設定ローカルテスト用)にて必要になります。
+ここで利用するサンプルFunction名は`Thumbnail`であるため、実際に外からこのFunctionをコールするためのURLは次のようになります。
+このURLは[Event Gridサブスクリプションの設定](#event-gridサブスクリプションの設定ローカルテスト用)にて必要になります。
 
 ```
 https://6083843f.ngrok.io/runtime/webhooks/EventGrid?functionName=Thumbnail
@@ -496,25 +556,33 @@ Event Grid Functionsのアクセス用URLの詳細については下記NOTEを�
 #### Functionsアプリのローカル実行
 
 まずは、プロジェクトルートディレクトリに移動してください。
-```
+```powershell
 cd ImageFunctions
 ```
 
-続いて、先ほど作成したストレージの接続文字列を取得してください。
+続いて、先ほど作成したストレージの接続文字列を使用する `local.settings.json` を作成します。
 
-```bash
+```powershell
 # ストレージの接続文字列を取得
-az storage account show-connection-string \
---resource-group $RESOURCE_GROUP --name $STORAGE_ACCOUNT_NAME \
---query connectionString --output tsv
-```
-> 出力結果
-```
-DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=azfuncws01;AccountKey=NowJXRrQK8r15dNsxR215lYwbTXgZOAqz5hFa6mmkQlApw8evPOyfX8udW8t1YVTZKpv1e4oCFmJA1NkL3z9Wx==
+az storage account show-connection-string --resource-group $RESOURCE_GROUP --name $STORAGE_ACCOUNT_NAME `
+  | convertfrom-json | foreach {$_.connectionString} | sv STORAGE_CONNECTION_STRING
+
+# local.settings.json を生成
+$localsetting = @{IsEncrypted = $false}
+$localsetting.Values = @{
+  AzureWebJobsStorage = $STORAGE_CONNECTION_STRING;
+  FUNCTIONS_WORKER_RUNTIME = "dotnet";
+  THUMBNAIL_CONTAINER_NAME = "thumbnails";
+  THUMBNAIL_WIDTH= "100";
+  datatype = "binary";
+}
+$localsetting | ConvertTo-json | Add-Content "local.settings.json"
+
+# local.settings.json の中身を確認
+cat "local.settings.json"
 ```
 
-この文字列を`local.settings.json`の`AzureWebJobsStorage`キーに追加ください。
-> local.settings.json
+> 出力結果(local.settings.json)
 ```json
 {
   "IsEncrypted": false,
@@ -528,9 +596,9 @@ DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=azfun
 }
 ```
 
-`local.settings.json`へのストレージ文字列追加が終わったら、次のコマンドでFunctionsを起動させてください。
+`local.settings.json`を作成したら、次のコマンドでFunctionsを起動させてください。
 
-```bash
+```powershell
 func host start
 ```
 <details><summary>出力結果</summary>
@@ -588,7 +656,8 @@ Application started. Press Ctrl+C to shut down.
 
 ここではEvent Gridサブスクリプションの設定を行いEvent Gridが拾う対象イベントとそのイベントのルーティング先(Webhookポスト先エンドポイント)をマッピングします。
 
-Azureポータルで下記イメージのように左側のメニューから「すべてのサービス」を選択いただき、検索フォームにキーワード文字列"`Event Grid`"を入力ください。絞り込まれたアイテム一覧の中にある「`Event Gridサブスクリプション`」をクリックください。
+Azureポータルで下記イメージのように左側のメニューから「すべてのサービス」を選択いただき、検索フォームにキーワード文字列"`Event Grid`"を入力ください。
+絞り込まれたアイテム一覧の中にある「`Event Gridサブスクリプション`」をクリックください。
 
 ![](assets/portal-select-eventgrid-subscription.png)
 
@@ -628,9 +697,10 @@ Event Grid サブスクリプションの設定が完了したら、最後にイ
 ### 2-3. FunctionsのAzureへのデプロイメントとテスト
 
 #### Functionsのデプロイメント
-下記コマンドでFunctionsをAzureにデプロイメントします。デプロイメント先には[1-3. Azureリソースの作成](#1-3-azureリソースの作成)で作成したAzure Functionsアカウント名を指定ください。
+下記コマンドでFunctionsをAzureにデプロイメントします。
+デプロイメント先には[1-3. Azureリソースの作成](#1-3-azureリソースの作成)で作成したAzure Functionsアカウント名を指定ください。
 
-```bash
+```powershell
 # プロジェクトルートディレクトリに移動 (念の為)
 cd ImageFunctions
 
@@ -670,20 +740,19 @@ Functions in azfuncws01:
 
 続いて、Azure Functionsの設定 (App Settings)をアップデートします。
 
-```bash
-# ストレージ文字列の取得
-STORAGE_CONNECTION_STRING=$(az storage account show-connection-string \
---resource-group $RESOURCE_GROUP --name $STORAGE_ACCOUNT_NAME \
---query connectionString --output tsv)
+```powershell
+# ストレージアカウント接続文字列の取得（念のため）
+az storage account show-connection-string --resource-group $RESOURCE_GROUP --name $STORAGE_ACCOUNT_NAME `
+  | convertfrom-json | foreach {$_.connectionString} | sv STORAGE_CONNECTION_STRING
 
 # Azure Functionsの設定 (App Settings)をアップデート
-az webapp config appsettings set \
-  -n $AZFUNC_APP_NAME \
-  -g $RESOURCE_GROUP \
-  --settings \
-AzureWebJobsStorage=$STORAGE_CONNECTION_STRING \
-THUMBNAIL_CONTAINER_NAME=thumbnails \
-THUMBNAIL_WIDTH=100 \
+az webapp config appsettings set `
+  -n $AZFUNC_APP_NAME `
+  -g $RESOURCE_GROUP `
+  --settings `
+AzureWebJobsStorage=$STORAGE_CONNECTION_STRING `
+THUMBNAIL_CONTAINER_NAME=thumbnails `
+THUMBNAIL_WIDTH=100 `
 FUNCTIONS_EXTENSION_VERSION=~2
 ```
 
@@ -714,44 +783,49 @@ Event Grid サブスクリプションの設定完了後、 [Event Grid Trigger 
 
 #### App Serviceプランの作成
 
-```bash
-export APP_SERVICE_PLAN_NAME="azfuncws01plan"
+```powershell
+$APP_SERVICE_PLAN_NAME = "azfuncws01plan"
 
-az appservice plan create --name $APP_SERVICE_PLAN_NAME \
+az appservice plan create --name $APP_SERVICE_PLAN_NAME `
     --resource-group $RESOURCE_GROUP --sku Free
 ```
 
 #### Web Appの作成
-```bash
-export WEBAPP_NAME="azfuncws01webapp"
+```powershell 
+$WEBAPP_NAME = "azfuncws01webapp-aaa"
 
-az webapp create --name $WEBAPP_NAME \
+az webapp create --name $WEBAPP_NAME `
     --resource-group $RESOURCE_GROUP --plan $APP_SERVICE_PLAN_NAME
 ```
 
 #### Web Appアプリのデプロイ
-```bash
+```powershell
 # Web Appにアプリケーションをデプロイ
-az webapp deployment source config --name $WEBAPP_NAME \
-  --resource-group $RESOURCE_GROUP --branch master --manual-integration \
+az webapp deployment source config --name $WEBAPP_NAME `
+  --resource-group $RESOURCE_GROUP --branch master --manual-integration `
   --repo-url https://github.com/Azure-Samples/storage-blob-upload-from-webapp
 
 # ストレージキー文字列の取得
-STORAGE_KEY=$(az storage account keys list --account-name $STORAGE_ACCOUNT_NAME --resource-group $RESOURCE_GROUP --output tsv |head -1 | awk '{print $3}')
+az storage account keys list `
+  --account-name $STORAGE_ACCOUNT_NAME `
+  --resource-group $RESOURCE_GROUP `
+  | convertfrom-json `
+  | % {$_[0].value} `
+  | sv STORAGE_KEY
 
 # Webappのアプリ設定を更新
-az webapp config appsettings set \
---name $WEBAPP_NAME --resource-group $RESOURCE_GROUP \
---settings AzureStorageConfig__AccountName=$STORAGE_ACCOUNT_NAME \
-AzureStorageConfig__ImageContainer=images \
-AzureStorageConfig__ThumbnailContainer=thumbnails \
+az webapp config appsettings set `
+--name $WEBAPP_NAME --resource-group $RESOURCE_GROUP `
+--settings AzureStorageConfig__AccountName=$STORAGE_ACCOUNT_NAME `
+AzureStorageConfig__ImageContainer=images `
+AzureStorageConfig__ThumbnailContainer=thumbnails `
 AzureStorageConfig__AccountKey=$STORAGE_KEY
 ```
 
 #### アクセステスト
 作成したWeb Appににブラウザでアクセスしてください。サンプル画像をアップロードして無事に画面下部にサムネイルが表示されたら成功です。
-```bash
-open https://$WEBAPP_NAME.azurewebsites.net/
+```powershell
+start "https://$WEBAPP_NAME.azurewebsites.net/"
 ```
 
 ![](assets/image-resizer-app-web-ui.png)
@@ -825,7 +899,7 @@ Pipeline設定後にPipelineを実行してください。Pipelineの処理が�
 ## 5. Cleanup
 
 本ハンズオンで作成したリソースを削除してください。
-```bash
+```powershell
 az group delete --name $RESOURCE_GROUP
 ```
 
