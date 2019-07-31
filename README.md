@@ -1,7 +1,8 @@
 # Azure Functions Hands-on Lab
 This repository contains Azure Functions Hands-on materials in Japanese.
 
-**Japanese Version** - これは日本語コンテンツです
+> - Language: **Japanese** (これは日本語コンテンツです)
+> - Shell: **Bash** (このハンズオンはBashで進めることを前提としています。PowerShellをお使いの方は[こちら](readme-win.md)の手順で進めてください)
 
 <!-- TOC -->
 
