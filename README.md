@@ -805,7 +805,7 @@ Azure DevOpsにサインインして、ブラウザで今回ご利用のAzure De
 2. 左メニューの`Pipelines`をクリックして`New Build Pipeline`を選択ください
 3. コードレポジトリに`Github`を選択して、先のステップにてForkしていただいたレポジトリ（`azure-functions-labs`）を選択ください。
     ![](assets/pipeline-select-repo.png)
-4. `Existing Azure Pipelines YAML file`を選択いただき、レポジトリ中のPipeline YAMLファイルパスを入力ください。ここではルート配下の`azure-pipelines.xml`になります。
+4. `Existing Azure Pipelines YAML file`を選択いただき、レポジトリ中のPipeline YAMLファイルパスを入力ください。ここではルート配下の`azure-pipelines.yml`になります。
     ![](assets/pipeline-select-existing-yaml.png)
 5. `Review your pipeline YAML`ページで、前ステップで選択いただいたYAMLファイルが表示されます。各種パラメータが変数形式で記述していますが、まずは`Run`を実行ください。Pipelineが失敗します。
 6. 再び上記で作成したPipelineを選択して選択して`Edit`ボタンで編集ページに進めてください。そこで下記のように`Variables`を選択いただきPipelineの変数設定ページに進めてください。
